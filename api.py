@@ -45,8 +45,8 @@ def post_write(
         accept_comment,
     )
     params = dict(
-        title=title,  # 글 제목 (필수)
-        content=content,  # 글 내용
+        title=title,
+        content=content,
         **option_params,
         **common_params,
     )
@@ -76,9 +76,9 @@ def post_modify(
         accept_comment,
     )
     params = dict(
-        postId=post_id,  # 글 번호(필수)
-        title=title,  # 글 제목(필수)
-        content=content,  # 글 본문
+        postId=post_id,
+        title=title,
+        content=content,
         **option_params,
         **common_params,
     )
@@ -96,18 +96,18 @@ def _check_options(
     accept_comment: Optional[int] = 1,
 ):
     option_params = {}
-    if tag:  # (',' 로 구분)
+    if tag:  # 태그(',' 로 구분)
         option_params.update({"tag": tag})
     if slogan:  # 문자 주소
         option_params.update({"slogan": slogan})
     if password:  # 보호글 비밀번호
         option_params.update({"password": password})
-    if published:  # 발행시간 (TIMESTAMP 이며 미래의 시간을 넣을 경우 예약. 기본값: 현재시간)
+    if published:  # 발행시간(TIMESTAMP 이며 미래의 시간을 넣을 경우 예약. 기본값: 현재시간)
         option_params.update({"published": published})
-    if visibility:  # (0: 비공개 - 기본값, 1: 보호, 3: 발행) 요청에서 기본값 3으로 변경
+    if visibility:  # 공개여부(0: 비공개 - 기본값, 1: 보호, 3: 발행)
         option_params.update({"visibility": visibility})
-    if category_id:  #  카테고리 아이디 (기본값: 0)
+    if category_id:  # 카테고리 아이디(기본값: 0)
         option_params.update({"category": category_id})
-    if accept_comment:  # 댓글 허용 (0, 1 - 기본값)
+    if accept_comment:  # 댓글 허용(0, 1 - 기본값)
         option_params.update({"acceptComment": accept_comment})
     return option_params
