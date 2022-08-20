@@ -44,13 +44,15 @@ def post_write(
         category_id,
         accept_comment,
     )
-    params = dict(
-        title=title,
-        content=content,
-        **option_params,
-        **common_params,
+    res = requests.post(
+        f"{API_URL}/post/read?",
+        params={
+            "title": title,
+            "content": content,
+            **option_params,
+            **common_params,
+        },
     )
-    res = requests.post(f"{API_URL}/post/read?", params=params)
     return orjson.loads(res.text)
 
 
@@ -75,14 +77,16 @@ def post_modify(
         category_id,
         accept_comment,
     )
-    params = dict(
-        postId=post_id,
-        title=title,
-        content=content,
-        **option_params,
-        **common_params,
+    res = requests.post(
+        f"{API_URL}/post/read?",
+        params={
+            "postId": post_id,
+            "title": title,
+            "content": content,
+            **option_params,
+            **common_params,
+        },
     )
-    res = requests.post(f"{API_URL}/post/read?", params=params)
     return orjson.loads(res.text)
 
 
