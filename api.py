@@ -1,25 +1,17 @@
-from typing import Any, Dict, Optional
 import requests
 import orjson
 
+from typing import Any, Dict, Optional
 from config import ACCESS_TOKEN, BLOG_NAME, API_URL
 
 
-common_params = {"access_token": ACCESS_TOKEN, "output": "json"}
-
-
-def get_blog_info() -> Dict[str, Any]:
-    res = requests.get(
-        f"{API_URL}/blog/info?",
-        params=common_params,
-    )
-    return orjson.loads(res.text)
+common_params = {"access_token": ACCESS_TOKEN, "output": "json", "blogName": BLOG_NAME}
 
 
 def get_post_list(page: Optional[int] = 1) -> Dict[str, Any]:
     res = requests.get(
         f"{API_URL}/post/list?",
-        params={"blogName": BLOG_NAME, "page": page, **common_params},
+        params={"page": page, **common_params},
     )
     return orjson.loads(res.text)
 
@@ -27,6 +19,95 @@ def get_post_list(page: Optional[int] = 1) -> Dict[str, Any]:
 def get_post_read(post_id: str):
     res = requests.get(
         f"{API_URL}/post/read?",
-        params={"blogName": BLOG_NAME, "postID": post_id, **common_params},
+        params={"postID": post_id, **common_params},
     )
     return orjson.loads(res.text)
+
+
+def post_write(
+    title: str,
+    content: str,
+    tag: Optional[str],
+    slogan: Optional[str],
+    password: Optional[str],
+    published: Optional[int],
+    visibility: Optional[int] = 3,
+    category_id: Optional[int] = 0,
+    accept_comment: Optional[int] = 1,
+) -> Dict[str, Any]:
+    option_params = _check_options(
+        tag,
+        slogan,
+        password,
+        published,
+        visibility,
+        category_id,
+        accept_comment,
+    )
+    params = dict(
+        title=title,  # 글 제목 (필수)
+        content=content,  # 글 내용
+        **option_params,
+        **common_params,
+    )
+    res = requests.post(f"{API_URL}/post/read?", params=params)
+    return orjson.loads(res.text)
+
+
+def post_modify(
+    post_id: str,
+    title: str,
+    content: str,
+    tag: Optional[str],
+    slogan: Optional[str],
+    password: Optional[str],
+    published: Optional[int],
+    visibility: Optional[int],
+    category_id: Optional[int],
+    accept_comment: Optional[int],
+) -> Dict[str, Any]:
+    option_params = _check_options(
+        tag,
+        slogan,
+        password,
+        published,
+        visibility,
+        category_id,
+        accept_comment,
+    )
+    params = dict(
+        postId=post_id,  # 글 번호(필수)
+        title=title,  # 글 제목(필수)
+        content=content,  # 글 본문
+        **option_params,
+        **common_params,
+    )
+    res = requests.post(f"{API_URL}/post/read?", params=params)
+    return orjson.loads(res.text)
+
+
+def _check_options(
+    tag: Optional[str],
+    slogan: Optional[str],
+    password: Optional[str],
+    published: Optional[int],
+    visibility: Optional[int] = 3,
+    category_id: Optional[int] = 0,
+    accept_comment: Optional[int] = 1,
+):
+    option_params = {}
+    if tag:  # (',' 로 구분)
+        option_params.update({"tag": tag})
+    if slogan:  # 문자 주소
+        option_params.update({"slogan": slogan})
+    if password:  # 보호글 비밀번호
+        option_params.update({"password": password})
+    if published:  # 발행시간 (TIMESTAMP 이며 미래의 시간을 넣을 경우 예약. 기본값: 현재시간)
+        option_params.update({"published": published})
+    if visibility:  # (0: 비공개 - 기본값, 1: 보호, 3: 발행) 요청에서 기본값 3으로 변경
+        option_params.update({"visibility": visibility})
+    if category_id:  #  카테고리 아이디 (기본값: 0)
+        option_params.update({"category": category_id})
+    if accept_comment:  # 댓글 허용 (0, 1 - 기본값)
+        option_params.update({"acceptComment": accept_comment})
+    return option_params
