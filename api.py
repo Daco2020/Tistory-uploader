@@ -31,9 +31,9 @@ def post_write(
     slogan: Optional[str],
     password: Optional[str],
     published: Optional[int],
-    visibility: Optional[int] = 3,
-    category_id: Optional[int] = 0,
-    accept_comment: Optional[int] = 1,
+    visibility: Optional[int],
+    category_id: Optional[int],
+    accept_comment: Optional[int],
 ) -> Dict[str, Any]:
     option_params = _check_options(
         tag,
@@ -91,9 +91,9 @@ def _check_options(
     slogan: Optional[str],
     password: Optional[str],
     published: Optional[int],
-    visibility: Optional[int],
-    category_id: Optional[int],
-    accept_comment: Optional[int],
+    visibility: Optional[int] = 3,
+    category_id: Optional[int] = 0,
+    accept_comment: Optional[int] = 1,
 ):
     option_params = {}
     if tag:  # 태그(',' 로 구분)
