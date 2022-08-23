@@ -19,7 +19,7 @@ def get_post_list(page: Optional[int] = 1) -> Dict[str, Any]:
 def get_post_read(post_id: str):
     res = requests.get(
         f"{API_URL}/post/read?",
-        params={"postID": post_id, **common_params},
+        params={"postId": post_id, **common_params},
     )
     return orjson.loads(res.text)
 
@@ -27,13 +27,13 @@ def get_post_read(post_id: str):
 def post_write(
     title: str,
     content: str,
-    tag: Optional[str],
-    slogan: Optional[str],
-    password: Optional[str],
-    published: Optional[int],
-    visibility: Optional[int],
-    category_id: Optional[int],
-    accept_comment: Optional[int],
+    tag: Optional[str] = None,
+    slogan: Optional[str] = None,
+    password: Optional[str] = None,
+    published: Optional[int] = None,
+    visibility: Optional[int] = 3,
+    category_id: Optional[int] = 0,
+    accept_comment: Optional[int] = 1,
 ) -> Dict[str, Any]:
     option_params = _check_options(
         tag,
@@ -45,7 +45,7 @@ def post_write(
         accept_comment,
     )
     res = requests.post(
-        f"{API_URL}/post/read?",
+        f"{API_URL}/post/write?",
         params={
             "title": title,
             "content": content,
@@ -53,6 +53,7 @@ def post_write(
             **common_params,
         },
     )
+    print(res.text)
     return orjson.loads(res.text)
 
 
@@ -60,13 +61,13 @@ def post_modify(
     post_id: str,
     title: str,
     content: str,
-    tag: Optional[str],
-    slogan: Optional[str],
-    password: Optional[str],
-    published: Optional[int],
-    visibility: Optional[int],
-    category_id: Optional[int],
-    accept_comment: Optional[int],
+    tag: Optional[str] = None,
+    slogan: Optional[str] = None,
+    password: Optional[str] = None,
+    published: Optional[int] = None,
+    visibility: Optional[int] = 3,
+    category_id: Optional[int] = 0,
+    accept_comment: Optional[int] = 1,
 ) -> Dict[str, Any]:
     option_params = _check_options(
         tag,
@@ -78,7 +79,7 @@ def post_modify(
         accept_comment,
     )
     res = requests.post(
-        f"{API_URL}/post/read?",
+        f"{API_URL}/post/modify?",
         params={
             "postId": post_id,
             "title": title,
@@ -95,9 +96,9 @@ def _check_options(
     slogan: Optional[str],
     password: Optional[str],
     published: Optional[int],
-    visibility: Optional[int] = 3,
-    category_id: Optional[int] = 0,
-    accept_comment: Optional[int] = 1,
+    visibility: Optional[int],
+    category_id: Optional[int],
+    accept_comment: Optional[int],
 ):
     option_params = {}
     if tag:  # 태그(',' 로 구분)
