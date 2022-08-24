@@ -1,23 +1,21 @@
-from typing import Any, Dict
 import api
 import markdown
-from bs4 import BeautifulSoup
 import os
+
+from typing import Any, Dict
+from bs4 import BeautifulSoup
 
 
 def run() -> None:
     title = _get_target_title()
-    html = _convert_md_to_html()
+    html = _convert_md_to_html(title)
     tag = _extract_tag(html)
     result = api.post_write(title=title, content=str(html), tag=tag, visibility=0)
     send_message(result)
 
 
 def _get_target_title() -> str:
-    """
-    새로 추가된 md 파일에서 title을 가져옵니다.
-    """
-    ...
+    # TODO: 추후 복수의 파일도 업로드할 수 있도록 변경예정
     file_arr = os.listdir("upload/.")
     if len(file_arr) > 1:
         raise ValueError("There must be only one upload article")
@@ -25,20 +23,14 @@ def _get_target_title() -> str:
     return title
 
 
-def _convert_md_to_html() -> Dict[str, Any]:
-    """
-    md 파일을 html 형식으로 바꾸어 반환합니다.
-    """
-    with open("target.md", "r") as f:
+def _convert_md_to_html(title: str) -> Dict[str, Any]:
+    with open(f"upload/{title}.md", "r") as f:
         text = f.read()
         html = markdown.markdown(text, extensions=["fenced_code"])
         return BeautifulSoup(html, "html.parser")
 
 
 def _extract_tag(html: str) -> str:
-    """
-    본문의 <h1>, <tag>를 업로드 tag로 가공합니다.
-    """
     head_tag = [h1.text for h1 in html.find_all("h1")]
     tail_tag = [html.tag.extract().text] if html.tag else []
     tag = ",".join(head_tag + tail_tag)
