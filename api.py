@@ -53,7 +53,6 @@ def post_write(
             **common_params,
         },
     )
-    print(res.text)
     return orjson.loads(res.text)
 
 

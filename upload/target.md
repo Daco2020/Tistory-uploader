@@ -45,3 +45,10 @@ regular_formatting = [
 ### 레퍼런스
 
 [Python:) Black으로 코드 스타일 자동화](https://velog.io/@gyuseok-dev/Python.-Black-the-Code-Formatter)
+
+
+<tag>python,len,if,for</tag>
+
+# 태그테스트
+
+# 테그테그
