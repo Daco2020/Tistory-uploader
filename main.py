@@ -1,3 +1,4 @@
+import datetime
 import api
 import markdown
 import os
@@ -8,9 +9,16 @@ from bs4 import BeautifulSoup
 
 def run() -> None:
     title = _get_target_title()
+    if title is None:
+        raise ValueError("There must be only one upload article.")
+
     html = _convert_md_to_html(title)
     tag = _extract_tag(html)
+
     result = api.post_write(title=title, content=str(html), tag=tag, visibility=0)
+    if result.get("tistory") is None:
+        raise ValueError("Upload failed.")
+
     send_message(result)
 
 
@@ -18,8 +26,8 @@ def _get_target_title() -> str:
     # TODO: 추후 복수의 파일도 업로드할 수 있도록 변경예정
     file_arr = os.listdir("upload/.")
     if len(file_arr) > 1:
-        raise ValueError("There must be only one upload article")
-    title = file_arr.pop().split(".")[0]
+        return
+    title = file_arr.pop().rstrip(".md")
     return title
 
 
@@ -38,12 +46,11 @@ def _extract_tag(html: str) -> str:
 
 
 def send_message(result: Dict[str, Any]) -> None:
-    """
-    개인 메신저로 업로드 결과를 보내줍니다.
-    (추후 구현 예정입니다)
-    """
-    print(result)
-    ...
+    now = datetime.datetime.now()
+    message = {
+        "content": f"시간 : {now.strftime('%Y-%m-%d %H:%M:%S')} \n결과 : {result['tistory'].get('url')}"
+    }
+    api.send_message_to_discord(message)
 
 
 if __name__ == "__main__":

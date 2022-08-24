@@ -2,7 +2,7 @@ import requests
 import orjson
 
 from typing import Any, Dict, Optional
-from config import ACCESS_TOKEN, BLOG_NAME, API_URL
+from config import ACCESS_TOKEN, BLOG_NAME, API_URL, DISCORD_WEBHOOK_URL
 
 
 common_params = {"access_token": ACCESS_TOKEN, "output": "json", "blogName": BLOG_NAME}
@@ -115,3 +115,7 @@ def _check_options(
     if accept_comment:  # 댓글 허용(0, 1 - 기본값)
         option_params.update({"acceptComment": accept_comment})
     return option_params
+
+
+def send_message_to_discord(message: Dict[str, Any]) -> None:
+    res = requests.post(DISCORD_WEBHOOK_URL, data=message)
