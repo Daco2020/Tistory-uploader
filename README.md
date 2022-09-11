@@ -5,6 +5,13 @@ This is a beta version. We will improve it later and provide it as a library.
 
 <br>
 
+## Update history
+- Add visibility, category ID option input - Sep 11, 22
+
+
+
+<br>
+
 ## How to use
 - Clone the repository.
 - Modify it to fit your code.
