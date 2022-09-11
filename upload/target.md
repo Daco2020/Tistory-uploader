@@ -42,6 +42,14 @@ regular_formatting = [
 ]
 ```
 
+
+|**number**|**price (cents)**|
+| :-: | :-: |
+|n < 5|100|
+|n >= 5 and n < 10|95|
+|n >= 10|90|
+
+
 ### 레퍼런스
 
 [Python:) Black으로 코드 스타일 자동화](https://velog.io/@gyuseok-dev/Python.-Black-the-Code-Formatter)
