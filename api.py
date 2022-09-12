@@ -8,7 +8,7 @@ from config import ACCESS_TOKEN, BLOG_NAME, API_URL, DISCORD_WEBHOOK_URL
 common_params = {"access_token": ACCESS_TOKEN, "output": "json", "blogName": BLOG_NAME}
 
 
-def get_blog_info():
+def get_blog_info() -> Dict[str, Any]:
     res = requests.get(
         f"{API_URL}/category/list?",
         params={**common_params},

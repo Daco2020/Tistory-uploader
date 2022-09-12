@@ -1,15 +1,16 @@
-import datetime
 import api
 import markdown
 import os
+from alert import Alert, DiscordAlert
 
 from typing import Any, Dict, Tuple
 from bs4 import BeautifulSoup
 
 
-def run() -> None:
+def run(alert: Alert) -> None:
     title = _get_target_title()
-    visibility, category_id = _get_optiopns()
+    visibility = _get_visibility()
+    category_id, category_name = _get_category()
     html = _convert_md_to_html(title)
     tag = _extract_tag(html)
 
@@ -22,7 +23,10 @@ def run() -> None:
     )
     if result.get("tistory") is None:
         raise ValueError("Upload failed.")
-    send_message(result)
+
+    _update_directory(category_name)
+
+    alert.send_message(result)
 
 
 def _get_target_title() -> str:
@@ -36,13 +40,14 @@ def _get_target_title() -> str:
     return title
 
 
-def _get_optiopns() -> Tuple[str, str]:
-    info = api.get_blog_info()
-
+def _get_visibility() -> str:
     visibility = input("공개여부 옵션을 입력해주세요. [0: 비공개, 2: 공개] \n>>> ")
     if visibility not in ["0", "2"]:
         raise ValueError("잘못된 공개여부 옵션입니다.")
 
+
+def _get_category() -> Tuple[str, str]:
+    info = api.get_blog_info()
     categories = sorted(
         (
             (category["id"], category["name"], category["parent"])
@@ -62,8 +67,10 @@ def _get_optiopns() -> Tuple[str, str]:
     if int(category_index) >= len(categories):
         raise ValueError("없는 카테고리 번호입니다.")
 
-    category_id = categories[category_index][0]
-    return visibility, category_id
+    targer_category = categories[category_index]
+    category_id, category_name = targer_category[0], targer_category[1]
+
+    return category_id, category_name
 
 
 def _convert_md_to_html(title: str) -> Dict[str, Any]:
@@ -80,13 +87,11 @@ def _extract_tag(html: str) -> str:
     return tag
 
 
-def send_message(result: Dict[str, Any]) -> None:
-    now = datetime.datetime.now()
-    message = {
-        "content": f"시간 : {now.strftime('%Y-%m-%d %H:%M:%S')} \n결과 : {result['tistory'].get('url')}"
-    }
-    api.send_message_to_discord(message)
+def _update_directory(category_name: str) -> None:
+    path = f"/category/{category_name}"
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 if __name__ == "__main__":
-    run()
+    run(DiscordAlert())
