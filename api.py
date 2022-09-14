@@ -2,8 +2,9 @@ import requests
 import orjson
 
 from typing import Any, Dict, Optional
-from config import ACCESS_TOKEN, BLOG_NAME, API_URL, DISCORD_WEBHOOK_URL
+from config import ACCESS_TOKEN, BLOG_NAME, DISCORD_WEBHOOK_URL
 
+API_URL = "https://www.tistory.com/apis"
 
 common_params = {"access_token": ACCESS_TOKEN, "output": "json", "blogName": BLOG_NAME}
 
@@ -126,4 +127,7 @@ def _check_options(
 
 
 def send_message_to_discord(message: Dict[str, Any]) -> None:
-    res = requests.post(DISCORD_WEBHOOK_URL, data=message)
+    if DISCORD_WEBHOOK_URL:
+        requests.post(DISCORD_WEBHOOK_URL, data=message)
+    else:
+        print(f"디스코드로 메시지를 보내지 못했습니다.\n'DISCORD_WEBHOOK_URL'을 확인해주세요.")
