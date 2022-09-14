@@ -12,7 +12,8 @@ class Alert(ABC):
 
 class DiscordAlert(Alert):
     def send_message(self, result: Dict[str, Any]) -> None:
+        now = datetime.datetime.now()
         message = {
-            "content": f"시간 : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} \n결과 : {result['tistory'].get('url')}"
+            "content": f"시간 : {now.strftime('%Y-%m-%d %H:%M:%S')} \n결과 : {result['tistory'].get('url')}"
         }
         api.send_message_to_discord(message)
