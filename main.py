@@ -1,6 +1,7 @@
 import api
 import markdown
 import os
+import shutil
 from alert import Alert, DiscordAlert
 
 from typing import Any, Dict, Tuple
@@ -24,7 +25,7 @@ def run(alert: Alert) -> None:
     if result.get("tistory") is None:
         raise ValueError("Upload failed.")
 
-    _update_directory(category_name)
+    _move_file(category_name, title)
 
     alert.send_message(result)
 
@@ -87,10 +88,11 @@ def _extract_tag(html: str) -> str:
     return tag
 
 
-def _update_directory(category_name: str) -> None:
-    path = f"/category/{category_name}"
+def _move_file(category_name: str, title: str) -> None:
+    path = f"contents/{category_name}"
     if not os.path.exists(path):
         os.makedirs(path)
+    shutil.move(f"upload/{title}.md", f"{path}/{title}.md")
 
 
 if __name__ == "__main__":
