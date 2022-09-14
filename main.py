@@ -34,7 +34,7 @@ def _get_target_title() -> str:
     # TODO: 추후 복수의 파일도 업로드할 수 있도록 변경예정
     file_arr = os.listdir("upload/.")
 
-    if len(file_arr) > 1:
+    if len(file_arr) != 1:
         raise ValueError("하나의 글만 업로드할 수 있습니다.")
 
     title = file_arr.pop().rstrip(".md")
