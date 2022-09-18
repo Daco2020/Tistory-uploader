@@ -23,7 +23,7 @@ def run(alert: Alert) -> None:
         category_id=category_id,
     )
     if result.get("tistory") is None:
-        raise ValueError("Upload failed.")
+        raise ValueError("업로드를 실패하였습니다.")
 
     _move_file(category_name, title)
 
@@ -32,7 +32,7 @@ def run(alert: Alert) -> None:
 
 def _get_target_title() -> str:
     # TODO: 추후 복수의 파일도 업로드할 수 있도록 변경예정
-    file_arr = os.listdir("upload/.")
+    file_arr = os.listdir("targets/.")
 
     if len(file_arr) != 1:
         raise ValueError("하나의 글만 업로드할 수 있습니다.")
@@ -68,14 +68,14 @@ def _get_category() -> Tuple[str, str]:
     if int(category_index) >= len(categories):
         raise ValueError("없는 카테고리 번호입니다.")
 
-    targer_category = categories[category_index]
-    category_id, category_name = targer_category[0], targer_category[1]
+    target_category = categories[category_index]
+    category_id, category_name = target_category[0], target_category[1]
 
     return category_id, category_name
 
 
 def _convert_md_to_html(title: str) -> Dict[str, Any]:
-    with open(f"upload/{title}.md", "r") as f:
+    with open(f"targets/{title}.md", "r") as f:
         text = f.read()
         html = markdown.markdown(text, extensions=["fenced_code"])
         return BeautifulSoup(html, "html.parser")
@@ -92,7 +92,7 @@ def _move_file(category_name: str, title: str) -> None:
     path = f"contents/{category_name}"
     if not os.path.exists(path):
         os.makedirs(path)
-    shutil.move(f"upload/{title}.md", f"{path}/{title}.md")
+    shutil.move(f"targets/{title}.md", f"{path}/{title}.md")
 
 
 if __name__ == "__main__":
